@@ -117,7 +117,7 @@ def _append_list(l1, v1, l2, v2):
 
 
 def print_result(name, total_l=None, n50=None, l50=None, gc=None, longest=None,
-                 smallest=None):
+                 smallest=None, no_header=False):
     """Print the result """
     headers, values = ['id'], [name]
 
@@ -136,7 +136,10 @@ def print_result(name, total_l=None, n50=None, l50=None, gc=None, longest=None,
         headers, values = _append_list(headers, 'smallest_contig', values,
                                        smallest)
 
-    print("\t".join(headers), "\n", "\t".join(values), sep='')
+    if no_header:
+        print("\t".join(values))
+    else:
+        print("\t".join(headers), "\n", "\t".join(values), sep='')
     return True
 
 
@@ -145,6 +148,8 @@ if __name__ == "__main__":
     parser.add_argument('assembly', help='Genome assembly in fasta[.gz]')
     parser.add_argument('--name', help='A name to recognize the assembly '
                         '- ["assembly"]', default="assembly", metavar="")
+    parser.add_argument('--no_header', help='Do not print the headers',
+                        default=False, action='store_true')
     parser.add_argument('--only', help='Turn ON the choice of statistic to '
                         'return', default=False, action='store_true')
     parser.add_argument('--length', help='Total length', default=False,
@@ -189,7 +194,8 @@ if __name__ == "__main__":
 
         # Print
         print_result(args.name, total_l=total_l, n50=n50, l50=l50, gc=gc_cont,
-                     longest=longest, smallest=smallest)
+                     longest=longest, smallest=smallest,
+                     no_header=args.no_header)
 
     except Exception as e:
         # Something went wrong with the arguments?!
