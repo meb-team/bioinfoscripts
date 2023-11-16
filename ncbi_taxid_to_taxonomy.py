@@ -5,6 +5,15 @@ import argparse
 from argparse import RawTextHelpFormatter
 from ete3 import NCBITaxa
 
+"""
+Future updates:
+    - Add a description in the script
+    - if the option `--update` is triggered, check whether the file
+    `taxdump.tar.gz` exists in the CWD. If yes, remove it.
+    - add the possibility to get the results for MULTIPLE taxids
+    in a single script call
+    - TBD...
+"""
 
 classic_ranks = ["superkingdom", "kingdom", "phylum", "class", "order",
                  "family", "genus", "species"]
