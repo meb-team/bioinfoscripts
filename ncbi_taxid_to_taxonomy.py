@@ -36,7 +36,7 @@ def print_values(my_lineage, add_id='', headers=False, classic=False):
             # to take this into account
             if add_id:
                 print(add_id, end="\t")
-            
+
             # A temporary dict for an easy access to ranks
             temp_d = {val[0]: val[1] for val in my_lineage}
 

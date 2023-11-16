@@ -7,6 +7,12 @@ import argparse
 from Bio import SeqIO
 from argparse import RawTextHelpFormatter
 
+"""
+Future updates:
+    - Add a description in the script
+    - TBD...
+"""
+
 
 def is_gz_file(filepath):
     with gzip.open(filepath, 'r') as fh:
@@ -105,18 +111,18 @@ def get_extreme_contigs(seq_d):
 
 
 def _append_list(l1, v1, l2, v2):
-    l1.append(v1)
-    l2.append(v2)
+    l1.append(str(v1))
+    l2.append(str(v2))
     return l1, l2
 
 
 def print_result(name, total_l=None, n50=None, l50=None, gc=None, longest=None,
                  smallest=None):
     """Print the result """
-    headers, values = ['assembly'], [name]
+    headers, values = ['id'], [name]
 
     if total_l:
-        headers, values = _append_list(headers, 'lentgh', values, total_l)
+        headers, values = _append_list(headers, 'length', values, total_l)
     if n50:
         headers, values = _append_list(headers, 'N50', values, n50)
     if l50:
@@ -142,7 +148,7 @@ if __name__ == "__main__":
     parser.add_argument('--only', help='Turn ON the choice of statistic to '
                         'return', default=False, action='store_true')
     parser.add_argument('--length', help='Total length', default=False,
-                        action='store_true')   
+                        action='store_true')
     parser.add_argument('--n50', help='Get the N50 and the L50',
                         default=False, action='store_true')
     parser.add_argument('--gc', help='Get the G+C content', default=False,
