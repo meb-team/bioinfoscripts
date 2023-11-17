@@ -117,12 +117,14 @@ def _append_list(l1, v1, l2, v2):
 
 
 def print_result(name, total_l=None, n50=None, l50=None, gc=None, longest=None,
-                 smallest=None, no_header=False):
+                 n_ctg=None, smallest=None, no_header=False):
     """Print the result """
     headers, values = ['id'], [name]
 
     if total_l:
         headers, values = _append_list(headers, 'length', values, total_l)
+    if n_ctg:
+        headers, values = _append_list(headers, 'num_contig', values, n_ctg)
     if n50:
         headers, values = _append_list(headers, 'N50', values, n50)
     if l50:
@@ -156,6 +158,8 @@ if __name__ == "__main__":
                         action='store_true')
     parser.add_argument('--n50', help='Get the N50 and the L50',
                         default=False, action='store_true')
+    parser.add_argument('--num_ctg', help='Get the number of contigs',
+                        default=False, action='store_true')
     parser.add_argument('--gc', help='Get the G+C content', default=False,
                         action='store_true')
     parser.add_argument('--extreme_contigs', help='Return the size of the '
@@ -174,6 +178,7 @@ if __name__ == "__main__":
 
         # Init variables
         contigs = fasta_to_seq_dict(args.assembly)
+        n_ctg = len(contigs.keys())  # Get the number of contigs
         total_l, n50, l50 = None, None, None
         gc_cont, longest, smallest = None, None, None
 
@@ -194,7 +199,7 @@ if __name__ == "__main__":
 
         # Print
         print_result(args.name, total_l=total_l, n50=n50, l50=l50, gc=gc_cont,
-                     longest=longest, smallest=smallest,
+                     n_ctg=n_ctg, longest=longest, smallest=smallest,
                      no_header=args.no_header)
 
     except Exception as e:
