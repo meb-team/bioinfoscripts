@@ -1,0 +1,13 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+description: an entry in the sample sheet
+properties:
+  accession:
+    type: string
+    description: Accession ID to make the sample unique, trackable
+  sequence:
+    type: string
+    description: path/to/the/sequence/file.fa
+
+required:
+  - accession
+  - sequence

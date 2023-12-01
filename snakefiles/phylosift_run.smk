@@ -1,0 +1,127 @@
+import os
+import glob
+import pandas as pd
+from snakemake.utils import validate
+
+# config file
+"""
+There is no plan to setup a config file, however the user must pass some arguments
+through `--config` like:
+- samples=/path/to/samples/file.tsv
+- outdir (not mandatory, default = ".")
+
+Some sources:
+- https://stackoverflow.com/questions/54095096/snakemake-and-pandas-syntax-getting-sample-specific-parameters-from-the-sample
+- https://github.com/snakemake-workflows/rna-seq-star-deseq2
+"""
+
+# Path of the executable
+exec_phylosift = os.path.expanduser('~') + '/bioware/PhyloSift/phylosift'
+
+# Read a Two-fields tab file WITHOUT headers
+samples = (
+    pd.read_csv(config["samples"], sep="\t", names = ['accession', 'sequence'])
+    .set_index("accession", drop=False)
+)
+
+# Several validations
+validate(config, "schema_yml/phylosift.config.yml")
+validate(samples, "schema_yml/phylosift.samples.yml")
+
+# Constraint the wildcard Accession to match something in the list of samples
+wildcard_constraints:
+    accession = "|".join(samples.index.tolist())
+
+# The main part
+rule all:
+    input:
+        # expand("{outdir}/{accession}/run_info.txt", outdir=config["outdir"],
+        #        accession=accessions)
+        expand("{outdir}/{accession}/00_run.done",
+                outdir=config["outdir"], accession=samples.index.tolist())
+
+rule run_phylosift:
+    input:
+        sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence']
+    output:
+        "{wildcards.outdir}" + "/" + "{accession}",
+        touch(config["outdir"] + "/" + "{accession}" + "/00_run.done")
+
+    params:
+        threads = config['threads']
+    run:
+        cmd = f"{exec_phylosift} search --isolate --besthit " + \
+            "--disable_updates --threads {params.threads} " + \
+            "--output {output[0]} {input.sequence}"
+        shell(cmd)
+
+# def identify_a_marker(result_path, wildcards):
+#     """ This function identify the name of a marker. This is mandatory to
+#     continue the run
+#     """
+#     if not os.path.isdir(result_path):
+#         raise IsADirectoryError('The output directory %s is not reachable'
+#                                 % result_path)
+
+#     markers = glob.glob(result_path.rstrip() + "/" + wildcards.accession "/" +
+#                         "blastDir/*lastal.candidate.aa*")
+#     if len(markers) > 0:
+#         return markers[0]
+#     else:
+#         return False
+
+# rule check_phylosift:
+#     """Check PhyloSift found at least **1** marker for the current genome"""
+#     input:
+#         prev_step = config["outdir"] + "/" + "00_run.done",
+#         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence']
+#     output:
+#         outdir = config["outdir"],
+#         touch(config["outdir"] + "/" + "01_check.done")
+#     params:
+#         marker = os.path.basename(identify_a_marker(config["outdir"]))
+#     run:
+#         if not params.marker:
+#             raise Exception('Phylosift did not identify marker in the current'
+#                             ' genome %s' % {wildcards.accession})
+#         else:
+#             shell("""
+#                   touch {output[0]}/{wildcards.accession}/
+#                     {params.marker}.marker
+#                   """)
+
+# rule align_phylosift:
+#     """Align the marker found by PhyloSift"""
+#     input:
+#         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence'],
+#         prev_step = config["outdir"] + "/" + "00_run.done",
+#         something = config["outdir"] + "/" + wildcards.accession + "/" +
+#                     "{markername}.marker",
+#         markerpath = identify_a_marker(config["outdir"])
+#     output:
+#         config["outdir"],
+#         touch(config["outdir"] + "/" + "02_align.done")
+#     params:
+#         threads = config['threads']
+#     run:
+#         cmd = f"{exec_phylosift} search --isolate --besthit " + \
+#               "--disable_updates --threads {params.threads} " + \
+#               "--output {output[0]} {input.markerpath}"
+#         shell(cmd)
+
+# rule rename_phylosift:
+#     """Rename the sequences, as PhyloSift gives them temporary IDs"""
+#     input:
+#         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence'],
+#         prev_step = config["outdir"] + "/" + "02_align.done",
+#         markerpath = identify_a_marker(config["outdir"])
+#     output:
+#         config["outdir"],
+#         touch(config["outdir"] + "/" + "03_rename.done")
+#     params:
+#         threads = config['threads']
+#     run:
+#         cmd = f"{exec_phylosift} name --isolate --besthit " + \
+#               "--disable_updates --threads {params.threads} " + \
+#               "--output {output[0]} {input.markerpath}"
+#         shell(cmd)

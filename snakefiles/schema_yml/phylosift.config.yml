@@ -1,0 +1,14 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+description: Config to run PhyloSift snakemake
+
+type: object
+
+properties:
+  outdir:
+    type: string
+    default: '.'
+  threads:
+    type: integer
+    default: 1
+
+
