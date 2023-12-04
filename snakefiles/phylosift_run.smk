@@ -36,9 +36,7 @@ wildcard_constraints:
 # The main part
 rule all:
     input:
-        # expand("{outdir}/{accession}/run_info.txt", outdir=config["outdir"],
-        #        accession=accessions)
-        expand("{outdir}/{accession}/02_align.done",
+        expand("{outdir}/{accession}/04_clean.done",
                 outdir=config["outdir"], accession=samples.index.tolist())
 
 rule run_phylosift:
@@ -46,7 +44,7 @@ rule run_phylosift:
         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence']
     output:
         directory(config["outdir"] + "/" + "{accession}"),
-        touch(config["outdir"] + "/{accession}/00_run.done")
+        touch(temp(config["outdir"] + "/{accession}/00_run.done"))
     params:
         threads = config['threads']
     run:
@@ -79,7 +77,7 @@ rule check_phylosift:
         prev_step = ancient(config["outdir"] + "/{accession}/00_run.done"),
         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence'],
     output:
-        touch(config["outdir"] + "/{accession}/01_check.done")
+        touch(temp(config["outdir"] + "/{accession}/01_check.done"))
     params:
         seq_acc = lambda wc: wc.get('accession')
     run:
@@ -98,33 +96,50 @@ rule align_phylosift:
         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence'],
         prev_step = ancient(config["outdir"] + "/{accession}/01_check.done"),
     output:
-        touch(config["outdir"] + "/{accession}/02_align.done")
+        touch(temp(config["outdir"] + "/{accession}/02_align.done"))
     params:
         threads = config['threads']
     run:
-        marker_found = glob.glob(config["outdir"] + "/{accession}/*.marker")[0]
+        marker_found = glob.glob(config["outdir"] + \
+                                 f"/{wildcards.accession}/*.marker")[0]
         marker_path = os.path.dirname(marker_found) + '/blastDir/' + \
                       os.path.basename(marker_found.replace('.marker', ''))
-      
-        cmd = f"{exec_phylosift} search --isolate --besthit " + \
+
+        cmd = f"{exec_phylosift} align --isolate --besthit " + \
               f"--disable_updates --threads {params.threads} " + \
               f"--output {config['outdir']}/{wildcards.accession} " + \
               f"{marker_path}"
         shell(cmd)
 
-# rule rename_phylosift:
-#     """Rename the sequences, as PhyloSift gives them temporary IDs"""
-#     input:
-#         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence'],
-#         prev_step = config["outdir"] + "/" + "02_align.done",
-#         markerpath = identify_a_marker(config["outdir"])
-#     output:
-#         config["outdir"],
-#         touch(config["outdir"] + "/" + "03_rename.done")
-#     params:
-#         threads = config['threads']
-#     run:
-#         cmd = f"{exec_phylosift} name --isolate --besthit " + \
-#               "--disable_updates --threads {params.threads} " + \
-#               "--output {output[0]} {input.markerpath}"
-#         shell(cmd)
+rule rename_phylosift:
+    """Rename the sequences, as PhyloSift gives them temporary IDs"""
+    input:
+        sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence'],
+        prev_step = ancient(config["outdir"] + "/{accession}/02_align.done")
+    output:
+        touch(temp(config["outdir"] + "/{accession}/03_rename.done"))
+    params:
+        threads = config['threads']
+    run:
+        marker_found = glob.glob(config["outdir"] + \
+                                 f"/{wildcards.accession}/*.marker")[0]
+        marker_path = os.path.dirname(marker_found) + '/blastDir/' + \
+                      os.path.basename(marker_found.replace('.marker', ''))
+
+        cmd = f"echo {marker_path}; "
+        cmd += f"{exec_phylosift} name --isolate --besthit " + \
+              f"--disable_updates --threads {params.threads} " + \
+              f"--output {config['outdir']}/{wildcards.accession} " + \
+              f"{marker_path}"
+        shell(cmd)
+
+rule clean:
+    input:
+        prev_step = ancient(config["outdir"] + "/{accession}/03_rename.done")
+    output:
+        touch(temp(config["outdir"] + "/{accession}/04_clean.done"))
+    run:
+        marker_found = glob.glob(config["outdir"] + \
+                            f"/{wildcards.accession}/*.marker")[0]
+        cmd = f"rm {marker_found}"
+        shell(cmd)
