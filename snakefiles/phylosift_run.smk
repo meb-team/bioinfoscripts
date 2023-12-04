@@ -30,22 +30,23 @@ validate(samples, "schema_yml/phylosift.samples.yml")
 
 # Constraint the wildcard Accession to match something in the list of samples
 wildcard_constraints:
-    accession = "|".join(samples.index.tolist())
+    accession = "|".join(samples.index.tolist()),
+    outdir = str("|" + config['outdir']).join(samples.index.tolist())
 
 # The main part
 rule all:
     input:
         # expand("{outdir}/{accession}/run_info.txt", outdir=config["outdir"],
         #        accession=accessions)
-        expand("{outdir}/{accession}/00_run.done",
+        expand("{outdir}/{accession}/01_check.done",
                 outdir=config["outdir"], accession=samples.index.tolist())
 
 rule run_phylosift:
     input:
         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence']
     output:
-        "{wildcards.outdir}" + "/" + "{accession}",
-        touch(config["outdir"] + "/" + "{accession}" + "/00_run.done")
+        directory(config["outdir"] + "/" + "{accession}"),
+        touch(config["outdir"] + "/{accession}/00_run.done")
 
     params:
         threads = config['threads']
@@ -55,40 +56,44 @@ rule run_phylosift:
             "--output {output[0]} {input.sequence}"
         shell(cmd)
 
-# def identify_a_marker(result_path, wildcards):
-#     """ This function identify the name of a marker. This is mandatory to
-#     continue the run
-#     """
-#     if not os.path.isdir(result_path):
-#         raise IsADirectoryError('The output directory %s is not reachable'
-#                                 % result_path)
+def identify_a_marker(result_path, seq_acc, full_path=False):
+    """ This function identify the name of a marker. This is mandatory to
+    continue the run
+    """
+    if not os.path.isdir(result_path):
+        raise IsADirectoryError('The output directory %s is not reachable'
+                                % result_path)
 
-#     markers = glob.glob(result_path.rstrip() + "/" + wildcards.accession "/" +
-#                         "blastDir/*lastal.candidate.aa*")
-#     if len(markers) > 0:
-#         return markers[0]
-#     else:
-#         return False
+    markers = glob.glob(result_path.rstrip() + "/" + seq_acc +
+                        "/" + "blastDir/*lastal.candidate.aa*")
+    if len(markers) > 0:
+        if full_path:
+            return markers[0]
+        else:
+            print(markers[0], os.path.basename(markers[0]), sep = '\n')
+            return os.path.basename(markers[0])
+    else:
+        return False
 
-# rule check_phylosift:
-#     """Check PhyloSift found at least **1** marker for the current genome"""
-#     input:
-#         prev_step = config["outdir"] + "/" + "00_run.done",
-#         sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence']
-#     output:
-#         outdir = config["outdir"],
-#         touch(config["outdir"] + "/" + "01_check.done")
-#     params:
-#         marker = os.path.basename(identify_a_marker(config["outdir"]))
-#     run:
-#         if not params.marker:
-#             raise Exception('Phylosift did not identify marker in the current'
-#                             ' genome %s' % {wildcards.accession})
-#         else:
-#             shell("""
-#                   touch {output[0]}/{wildcards.accession}/
-#                     {params.marker}.marker
-#                   """)
+rule check_phylosift:
+    """Check PhyloSift found at least **1** marker for the current genome"""
+    input:
+        prev_step = ancient(config["outdir"] + "/{accession}/00_run.done"),
+        sequence = lambda wildcards: samples.loc[wildcards.accession, 'sequence'],
+    output:
+        touch(config["outdir"] + "/{accession}/01_check.done")
+    params:
+        seq_acc = lambda wc: wc.get('accession')
+
+    run:
+        marker = identify_a_marker(config["outdir"], params.seq_acc)
+        if not marker:
+            raise Exception('Phylosift did not identify marker in the current'
+                            ' genome %s' % {wildcards.accession})
+        else:
+            cmd = f"touch {config['outdir']}/{wildcards.accession}" + \
+                  "/{marker}.marker"
+            shell(cmd)
 
 # rule align_phylosift:
 #     """Align the marker found by PhyloSift"""

@@ -32,3 +32,5 @@ requires an input: a tab-separated file with 2 columns, with the genome identifi
 \{tab\} `path/to/sequence/file.fa`, **without** column names. And pass this
 information to the script with `--config samples=/path/to/my_samples.tsv`.
 It is also possible to give an output directory with `--config outdir=path/to/dir`.
+The number of thread to run_PhyloSift_ can be customised too, through
+`--config thread={int}`.
