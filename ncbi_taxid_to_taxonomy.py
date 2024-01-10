@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 
+""" This script format retrieve and format the lineage from a NCBI txid"""
+
+import os
 import sys
 import argparse
 from argparse import RawTextHelpFormatter
 from ete3 import NCBITaxa
 
-"""
-Future updates:
-    - Add a description in the script
-    - if the option `--update` is triggered, check whether the file
-    `taxdump.tar.gz` exists in the CWD. If yes, remove it.
-    - add the possibility to get the results for MULTIPLE taxids
-    in a single script call
-    - TBD...
-"""
+# Future updates:
+#  - Add a description in the script
+#  - if the option `--update` is triggered, check whether the file
+#    `taxdump.tar.gz` exists in the CWD. If yes, remove it.
+#  - add the possibility to get the results for MULTIPLE taxids
+#    in a single script call
+#  - TBD... """
 
 classic_ranks = ["superkingdom", "kingdom", "phylum", "class", "order",
                  "family", "genus", "species"]
@@ -41,12 +42,12 @@ def print_values(my_lineage, add_id='', headers=False, classic=False):
             temp_d = {val[0]: val[1] for val in my_lineage}
 
             # Print
-            for i in range(len(classic_ranks)):
-                if classic_ranks[i] in temp_d.keys():
+            for i, classic_rank in enumerate(classic_ranks):
+                if classic_rank in temp_d.keys():
                     if i == len(classic_ranks) - 1:  # For the new line
-                        print(temp_d[classic_ranks[i]])
+                        print(temp_d[classic_rank])
                     else:
-                        print(temp_d[classic_ranks[i]], end="\t")
+                        print(temp_d[classic_rank], end="\t")
                 else:
                     if i == len(classic_ranks) - 1:  # For the new line
                         print()
@@ -54,7 +55,7 @@ def print_values(my_lineage, add_id='', headers=False, classic=False):
                         print("\t", end='')
 
     else:
-        for i in range(len(my_lineage)):
+        for i, sub_lineage in enumerate(my_lineage):
             # Shall we add an identifier?
             if (i == 0) and (add_id != ''):
                 if index == 0:
@@ -63,17 +64,18 @@ def print_values(my_lineage, add_id='', headers=False, classic=False):
                     print(add_id, end="\t")
 
             if i == len(my_lineage) - 1:
-                print(my_lineage[i][index])
+                print(sub_lineage[index])
             else:
-                print(my_lineage[i][index], end='\t')
+                print(sub_lineage[index], end='\t')
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
     parser.add_argument('taxid', help='NCBI taxid', type=int)
-    parser.add_argument('--update', help='Update the local NCBI database',
-                        default=False, action='store_true')
+    parser.add_argument('--update', help='Update the local NCBI database'
+                        ' (can take minutes to complete)', default=False,
+                        action='store_true')
     parser.add_argument('--id', help='An ID to add as the first column',
                         default='', type=str)
     parser.add_argument('--no-clade', help='Remove the rank(s) "clade" from'
@@ -99,9 +101,10 @@ if __name__ == "__main__":
         # Load the database
         ncbi = NCBITaxa()
 
-        # If the user wants to update its local database
+        # If the user wants to update its local database; then clean the file
         if args.update:
             ncbi.update_taxonomy_database()
+            os.remove('taxdump.tar.gz')
 
         # Get the full lineage of the given taxid
         lineage = ncbi.get_lineage(args.taxid)
@@ -140,11 +143,9 @@ if __name__ == "__main__":
                          classic=args.classic)
         print_values(my_lineage, add_id=args.id, classic=args.classic)
 
-        """
-        This is a way of printing the FULL lineage:
-            print('\t'.join([ranks[taxid] for taxid in lineage]))
-            print('\t'.join([names[taxid] for taxid in lineage]))
-            """
+        # This is a way of printing the FULL lineage:
+        #   print('\t'.join([ranks[taxid] for taxid in lineage]))
+        #   print('\t'.join([names[taxid] for taxid in lineage]))
 
     except Exception as e:
         # Something went wrong with the arguments?!
