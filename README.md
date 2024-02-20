@@ -6,6 +6,9 @@
 taxonomy. Several options are available. Uses the _ETE3_ toolkit.
 - `assembly_statistics.py`: return some basic statistics for an assembly
 - `get_pfam_specific_hmm.py`: extract a list of PFam profiles rom the IDs.
+- `comparem_aai_result_to_matrix.py`: reformat the amino-acid identity (AAI)
+results obtained by `comparem aai_wf`, as the table is not very easy to understand...
+
 
 ## Snakefiles
 
