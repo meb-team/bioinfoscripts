@@ -2,13 +2,25 @@
 
 ## Python3 scripts
 
+### Libraries
+
+Here is a list of homemade libraries:
+
+- `generic_utils.py`: provides generic functions that can be used in my other scripts
+
+### Scripts for parsing
+
+Here is a list of scripts used for different task. Note that the library
+`generic_utils.py` cited above is **mandatory** for some of them!
+
 - `ncbi_taxid_to_taxonomy.py`: take a NCBI _taxid_ as input and outputs the full
 taxonomy. Several options are available. Uses the _ETE3_ toolkit.
 - `assembly_statistics.py`: return some basic statistics for an assembly
 - `get_pfam_specific_hmm.py`: extract a list of PFam profiles rom the IDs.
 - `comparem_aai_result_to_matrix.py`: reformat the amino-acid identity (AAI)
 results obtained by `comparem aai_wf`, as the table is not very easy to understand...
-
+- `number_informative_site_alignment.py`: get the proportion of gaps for each
+sequence in an alignment file, _Fasta_ format
 
 ## Snakefiles
 
