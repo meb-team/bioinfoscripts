@@ -110,9 +110,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        # Read and check that all sequences have the same length
+        # Read, check alignment and outfile if provided
         seqs = read_fasta_alignment(args.alignment)
         check_seq_length(seqs)
+        if args.o:
+            if os.path.exists(args.o):
+                raise FileExistsError('Outfile exists but this script does not'
+                                      'overwright things')
 
         # The core of this script
         prop_informative_sites(seqs, args.o)
