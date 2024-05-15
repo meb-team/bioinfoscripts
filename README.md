@@ -1,5 +1,34 @@
 # Collection of general scripts for bioinformatics
 
+## _Conda environments_
+
+Some scripts presented below require non-native Python libraries or external
+tools. I provide recipes for the _Conda_ environments I used to use under the
+`resource/` directory.  
+To install such environment from a recipe, follow these instructions:
+
+1. first I suggest you to use [mamba](https://mamba.readthedocs.io/en/latest/)
+as package manager which is orders of magnitude **faster** than _Conda_
+
+```bash
+conda install -n base -c conda-forge mamba 
+```
+
+2. Install the environment from the _YML_ recipe
+
+```bash
+conda env create --solver libmamba -f /path/to/environment.yml -n MyEnvName
+```
+
+3. Activate your freshly installed environment
+
+```bash
+conda activate MyEnvName
+```
+
+For documentation about _Conda_ usage, I suggest you to have a look at the
+[official documentation](https://conda.io/projects/conda/en/latest/user-guide/getting-started.html).
+
 ## Python3 scripts
 
 ### Libraries
@@ -16,7 +45,7 @@ Here is a list of scripts used for different task. Note that the library
 - `ncbi_taxid_to_taxonomy.py`: take a NCBI _taxid_ as input and outputs the full
 taxonomy. Several options are available. Uses the _ETE3_ toolkit.
 - `assembly_statistics.py`: return some basic statistics for an assembly
-- `get_pfam_specific_hmm.py`: extract a list of PFam profiles rom the IDs.
+- `get_pfam_specific_hmm.py`: extract a list of PFam profiles from the IDs.
 - `comparem_aai_result_to_matrix.py`: reformat the amino-acid identity (AAI)
 results obtained by `comparem aai_wf`, as the table is not very easy to understand...
 - `number_informative_site_alignment.py`: get the proportion of gaps for each
@@ -48,5 +77,13 @@ requires an input: a tab-separated file with 2 columns, with the genome identifi
 \{tab\} `path/to/sequence/file.fa`, **without** column names. And pass this
 information to the script with `--config samples=/path/to/my_samples.tsv`.
 It is also possible to give an output directory with `--config outdir=path/to/dir`.
-The number of thread to run_PhyloSift_ can be customised too, through
+The number of thread to run _PhyloSift_ can be customised too, through
 `--config thread={int}`.
+
+## Usage, Share and Contibutions
+
+All resources available in this repository are released under the _GNU General_
+_Public License v2.0_, see `LICENCE` for more details.
+
+Any contribution is welcome!
+
