@@ -85,6 +85,51 @@ It is also possible to give an output directory with `--config outdir=path/to/di
 The number of thread to run _PhyloSift_ can be customised too, through
 `--config thread={int}`.
 
+## Miscelaneous
+
+### Gererate URL to share files stored in _S3_
+
+Here is the procedure to generate a temporary URL to download a **single** file
+stored in a _S3_ bucket:
+
+```bash
+# Generate the link, replace 'http' by 'https'
+s3cmd signurl S3://BUCKET/path/MyFile `date -d 'now + 7 days' +%s` | \
+    sed 's/http:/https:/g'
+
+# Download with wget OR curl
+wget -O MyFile URL
+curl -o MyFile URL
+```
+
+A full example:
+
+```bash
+# Get the list of files; 'microstore' is an alias to my S3 storage name
+rclone ls microstore:for_data_sharing/ | cut -f 2 -d " " | \
+    awk 'BEGIN{FS="/"}{print "for_data_sharing/" $0 "\t" $3}' \
+    >metaplasmidomes_files.tsv
+
+# Generate the links
+while read file name
+do
+    s3cmd signurl S3://$file `date -d 'now + 7 days' +%s` | \
+        sed 's/http:/https:/g' | awk -v file=$file -v name=$name \
+        'BEGIN{}{print file "\t" name "\t" $0}' \
+            >>metaplasmidomes_files_urls.tsv
+    sleep 1
+done < metaplasmidomes_files.tsv
+
+# Download
+while read file name url
+do
+    ## Uncomment the line with your preferred tool
+    # wget -O $name $url
+    # curl -o $name $url
+    sleep 2 # because it always better to let server rest for some seconds
+done < metaplasmidomes_files_urls.tsv
+```
+
 ## Usage, Share and Contibutions
 
 All resources available in this repository are released under the _GNU General_
