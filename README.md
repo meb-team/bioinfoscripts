@@ -1,4 +1,9 @@
-# Collection of general scripts for bioinformatics
+# Collection of general scripts and files for bioinformatics
+
+## Dotfiles
+
+Examples of dotfiles in the directory `dotfiles/`. Do not forget to copy them
+and add the caracteristic `.` prefix!
 
 ## _Conda environments_
 

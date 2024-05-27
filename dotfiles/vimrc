@@ -1,0 +1,73 @@
+" A bunch of Vim option for customisation
+" Here is a a list of resources:
+"  - https://www.vim.org/ for the global help
+"  - https://vim.fandom.com/wiki/Vim_Tips_Wiki  for many usefull tips, tricks and ideas
+"  - https://vimawesome.com/  for the plugins
+
+"set nowrap
+set ai
+set background=dark
+set history=750
+set undolevels=750
+set iskeyword+=_,$,@,%,#,-
+set hlsearch
+set number
+"set list  "add '$' to EOL
+set mouse=a
+"set foldmethod=indent
+"set foldlevel=20
+set cursorline
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+set smarttab
+set expandtab
+set noerrorbells "Replace error sound by a visual flash
+set visualbell
+set showmatch
+set hidden
+set incsearch
+set autoindent
+set backspace=indent,eol,start "do no what this do
+set term=xterm-256color
+set nobackup
+set nowritebackup
+set noswapfile
+set noruler
+set laststatus=2
+"set tw=80  " This controls the text width
+set updatetime=500 "bottlenek performance?
+set wildmenu "This trigger the completion menu
+set wildmode =list:longest,full "To tune the completion list
+set wildignore =*.o,*.r,*.so,*.sl,*.tar,*.tgz "Ignore certain files fro completion, glob(), and so on
+
+" Other setup based on plugins
+" Check https://github.com/tpope/vim-pathogen
+execute pathogen#infect()
+
+filetype plugin indent on
+syntax on
+let g:gruvbox_contrast_dark="hard" "One of the GruvBox Color scheme
+colorscheme gruvbox
+
+" Plugin 'Tagbar'
+let g:tagbar_left = 1
+
+" Git stuff
+nnoremap <Leader>m :Magit<CR>  "In vim, press '\m' to show the workflow of the current git project (unstagged files, etc.)
+
+" buffer explorer stuff -- Damien: I dunno the meaning of these lines
+" Found this: 'LustyExplorer : Dynamic filesystem and buffer explorer'
+nnoremap <Leader>f :LustyFilesystemExplorer <CR>
+nnoremap <Leader>o :LustyFilesystemExplorerFromHere <CR>
+nnoremap <Leader>be :LustyBufferExplorer <CR>
+nnoremap <Leader>bb :LustyBufferGrep <CR>
+
+"SuperTab
+"let g:SuperTabMappingTabLiteral = '<S-tab>'
+let g:SuperTabDefaultCompletionType = "<c-n>"
+
+"Vim-airline: a customisable status bar
+let g:airline#extensions#tabline#enabled = 1
+"let g:airline_section_b = '%{strftime("%C")}'
+"let g:airline_section_y = 'BN: %{bufnr("%")}'
