@@ -1,11 +1,30 @@
 # Collection of general scripts and files for bioinformatics
 
+## Ideas to implement
+
+A simple script to remove sequences from a multifasta using its ID, without
+external libraries like _BioPython_. This means write a sequence parser, test
+the exact presence of identifier, and explicily tell the which sequence were
+removed. Default will be an output in the STDOUT and information in the
+STDERR. A file and logfile and be used too.
+
 ## Dotfiles
 
 Examples of dotfiles in the directory `dotfiles/`. Do not forget to copy them
 and add the caracteristic `.` prefix!
 
-## _Conda environments_
+## _Conda_ environments
+
+First a tips: _how activating environment in a BASH script?_ Here are two lines
+to add **at the top of your script**:
+
+```bash
+CONDA_BASE=$(conda info --base)
+source $CONDA_BASE/etc/profile.d/conda.sh
+
+# Then load one of your environment, eg:
+conda activate MySuperEnvironment
+```
 
 Some scripts presented below require non-native Python libraries or external
 tools. I provide recipes for the _Conda_ environments I used to use under the
