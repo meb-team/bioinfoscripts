@@ -15,6 +15,15 @@ and add the caracteristic `.` prefix!
 
 ## _Conda_ environments
 
+**IMPORTANT** : Some channels require a licence to use them, that's why I recently
+updated my [_.condarc_](dotfiles/condarc). This
+[blog post](https://juke34.github.io/fix-anaconda-licensing-issues/en/)
+illustrates the problem and help to configure _Conda_. This
+[other post](https://juke34.github.io/fix-anaconda-licensing-issues/en/pages/conda-channels/)
+lists the licenced channels.
+
+---
+
 First a tips: _how activating environment in a BASH script?_ Here are two lines
 to add **at the top of your script**:
 
@@ -32,10 +41,10 @@ tools. I provide recipes for the _Conda_ environments I used to use under the
 To install such environment from a recipe, follow these instructions:
 
 1. first I suggest you to use [mamba](https://mamba.readthedocs.io/en/latest/)
-as package manager which is orders of magnitude **faster** than _Conda_
+   as package manager which is orders of magnitude **faster** than _Conda_
 
 ```bash
-conda install -n base -c conda-forge mamba 
+conda install -n base -c conda-forge mamba
 ```
 
 2. Install the environment from the _YML_ recipe
@@ -67,13 +76,13 @@ Here is a list of scripts used for different task. Note that the library
 `generic_utils.py` cited above is **mandatory** for some of them!
 
 - `ncbi_taxid_to_taxonomy.py`: take a NCBI _taxid_ as input and outputs the full
-taxonomy. Several options are available. Uses the _ETE3_ toolkit.
+  taxonomy. Several options are available. Uses the _ETE3_ toolkit.
 - `assembly_statistics.py`: return some basic statistics for an assembly
 - `get_pfam_specific_hmm.py`: extract a list of PFam profiles from the IDs.
 - `comparem_aai_result_to_matrix.py`: reformat the amino-acid identity (AAI)
-results obtained by `comparem aai_wf`, as the table is not very easy to understand...
+  results obtained by `comparem aai_wf`, as the table is not very easy to understand...
 - `number_informative_site_alignment.py`: get the proportion of gaps for each
-sequence in an alignment file, _Fasta_ format
+  sequence in an alignment file, _Fasta_ format
 
 ## Snakefiles
 
@@ -88,21 +97,23 @@ snakemake -s ~/bioinfoscripts/snakefiles/phylosift_run.smk  --config samples=sam
 ```
 
 A list of interesting parameters:
+
 - `--dry-run`, to test the behavior
 - `-c`, `--cores`, the number of threads that _SnakeMake_ can use. The workflow
-is distributed on this number of cores
+  is distributed on this number of cores
 - `--config param=value`, to pass expected parameters
 
 ### The list of wokflows
 
 A list of SnakeMake scripts
+
 - `snakefiles/phylosift_run.smk`: run _PhyloSift_ on a genome. This workflow
-requires an input: a tab-separated file with 2 columns, with the genome identifier
-\{tab\} `path/to/sequence/file.fa`, **without** column names. And pass this
-information to the script with `--config samples=/path/to/my_samples.tsv`.
-It is also possible to give an output directory with `--config outdir=path/to/dir`.
-The number of thread to run _PhyloSift_ can be customised too, through
-`--config thread={int}`.
+  requires an input: a tab-separated file with 2 columns, with the genome identifier
+  \{tab\} `path/to/sequence/file.fa`, **without** column names. And pass this
+  information to the script with `--config samples=/path/to/my_samples.tsv`.
+  It is also possible to give an output directory with `--config outdir=path/to/dir`.
+  The number of thread to run _PhyloSift_ can be customised too, through
+  `--config thread={int}`.
 
 ## Miscelaneous
 
@@ -155,4 +166,3 @@ All resources available in this repository are released under the _GNU General_
 _Public License v2.0_, see `LICENCE` for more details.
 
 Any contribution is welcome!
-
