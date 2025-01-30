@@ -84,6 +84,11 @@ Here is a list of scripts used for different task. Note that the library
 - `number_informative_site_alignment.py`: get the proportion of gaps for each
   sequence in an alignment file, _Fasta_ format
 
+### Other purposes
+
+- `generate_ICS_file.py`: aims to generate an _ICalendar_ (_ICS_) file with a
+  collection of events, based on dates written in a text file. This is a **WIP**
+
 ## Snakefiles
 
 ### Run a workflow
