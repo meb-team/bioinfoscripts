@@ -7,12 +7,40 @@ This will (maybe) improved in the future
 """
 
 from argparse import RawTextHelpFormatter
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import os
 import sys
 import argparse
 import icalendar as ic
+
+def _add_reminder(date, n_day_before = 2):
+    """Create a reminder 2 days BEFORE the date passed in argument
+    If the reminder is a saturday or a sunday, it is set to the friday.
+    date is a tuple of datetime.datetime() objects
+    """
+    # Set the reminder "n_day_before"
+    reminder_start = date[0] - timedelta(days = n_day_before)
+    reminder_end = reminder_start + timedelta(hours = 1) # A 1 hour event for the reminder
+
+    # Is it during the week-end? 6 = saturday; 7 = sunday
+    if datetime.isoweekday(reminder_start) >= 6:
+        for i in range(1,7):
+            print(date[0], "reminder test, week day = ",
+                datetime.isoweekday(date[0] - timedelta(days = i)))
+
+            if datetime.isoweekday(date[0] - timedelta(days = i)) == 5:
+                reminder_start = date[0] - timedelta(days = i)
+                reminder_end = reminder_start + timedelta(hours = 1    )
+                break
+
+    event = ic.Event()
+    event.add('summary', 'Préparer sortie terrain')
+    event.add('description', "Charger batterie et sondes; preparer materiel")
+    event.add('dtstart', reminder_start)
+    event.add('dtend', reminder_end)
+
+    return event
 
 
 def parse_dates(infile):
@@ -48,6 +76,9 @@ def create_events(cal, dates):
         # Add the event in the calendar
         cal.add_component(event)
 
+        # Add a reminder for the current event
+        reminder = _add_reminder(date)
+        cal.add_component(reminder)
     return cal
 
 
@@ -80,10 +111,12 @@ if __name__ == "__main__":
         # Read the dates
         dates = parse_dates(args.dates)
 
-        # Create the events
+        # Create the events 
         ## Create an event 48h before to charge the batteries
         ## and book the material
         cal = create_events(cal, dates)
+
+        print(cal)
 
         # write the ICS file
         print_cal(cal, args.ouftile + ".ics")

@@ -88,7 +88,7 @@ Here is a list of scripts used for different task. Note that the library
 
 - `generate_ICS_file.py`: aims to generate an _ICalendar_ (_ICS_) file with a
   collection of events, based on dates written in a text file. There is no may to change
-  the name of the event, nor the schedule (8am - noon) - **WIP**
+  the name of the event, nor the schedule (8am - noon). Also generate a reminder 48h before **WIP**
 
 ## Snakefiles
 
