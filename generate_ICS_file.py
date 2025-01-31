@@ -15,16 +15,40 @@ import argparse
 import icalendar as ic
 
 
-def parse_dates():
-    """Read the file with all dates, return a list
-    Input format : YYYY-MM-DD"""
+def parse_dates(infile):
+    """Read the file with all dates, Input format : YYYY-MM-DD
+    Return a list of tuples [(start, end)]
+    """
     all_dates = []
     # loop over the lines of line (dates)
-    # start = datetime.strptime(line + "-8", "%Y-%m-%d-%H")  # Froce the 8 am
-    # end = datetime.strptime(line + "-12", "%Y-%m-%d-%H")  # Froce the 12 am
-    # Store both values as a tuple in a list
+    with open(infile, "r") as fi:
+        for line in fi.readlines():
+            start = datetime.strptime(line.rstrip() + "-8", "%Y-%m-%d-%H")  # Force the 8 am
+            end = datetime.strptime(line.rstrip() + "-12", "%Y-%m-%d-%H")  # Force noon
+
+            # store as tuple
+            all_dates.append((start, end))
 
     return all_dates
+
+
+def create_events(cal, dates):
+    """Add events to a calendar
+    Dates are stored are as list of tuple (start, end)
+    Futur improvment : leave the choice of events name"""
+
+    for date in dates:
+        # create the event
+        event = ic.Event()
+        event.add('summary', 'Sortie ANR Diamond')
+        event.add('description', "Prélèvement sur le lac d'Aydat")
+        event.add('dtstart', date[0])
+        event.add('dtend', date[1])
+
+        # Add the event in the calendar
+        cal.add_component(event)
+
+    return cal
 
 
 def print_cal(cal, outfile):
@@ -35,26 +59,11 @@ def print_cal(cal, outfile):
     return True
 
 
-def create_events(cal, dates):
-    """Add events to a calendar, based on the dates provided
-    Futur improvment : leave the choice of events name"""
-
-    # A for loop to go through all dates; one event per date
-
-    # event = ic.Event()
-    # event.add('summary', 'Sortie ANR Diamond')
-    # event.add('description', "Prélèvement sur le lac d'Aydat")
-    # event.add('dtstart', datetime(2025, 1, 31, 8, 0, 0))
-    # event.add('dtend', datetime(2025, 1, 31, 13, 0, 0))
-
-    # # Add the event in the calendar
-    # cal.add_component(event)
-
-    return cal
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(formatter_class = RawTextHelpFormatter)
     parser.add_argument('dates', help='File with the dates, format "YYYY-MM-DD"')
+    parser.add_argument('ouftile', help='Basename of the file that contains the'
+                        'calendar')
 
     args = parser.parse_args()
 
@@ -63,16 +72,21 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
+        ## Add checks if input and output file exists ==> raise error
+
         # init the calendar
         cal = ic.Calendar()
 
         # Read the dates
+        dates = parse_dates(args.dates)
 
         # Create the events
         ## Create an event 48h before to charge the batteries
         ## and book the material
+        cal = create_events(cal, dates)
 
         # write the ICS file
+        print_cal(cal, args.ouftile + ".ics")
 
     except Exception as e:
         # Something went wrong with the arguments?!
