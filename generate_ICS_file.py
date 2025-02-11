@@ -14,11 +14,14 @@ import sys
 import argparse
 import icalendar as ic
 
+UID = 0
+
 def _add_reminder(date, n_day_before = 2):
     """Create a reminder 2 days BEFORE the date passed in argument
     If the reminder is a saturday or a sunday, it is set to the friday.
     date is a tuple of datetime.datetime() objects
     """
+    global UID
     # Set the reminder "n_day_before"
     reminder_start = date[0] - timedelta(days = n_day_before)
     reminder_end = reminder_start + timedelta(hours = 1) # A 1 hour event for the reminder
@@ -39,6 +42,9 @@ def _add_reminder(date, n_day_before = 2):
     event.add('description', "Charger batterie et sondes; preparer materiel")
     event.add('dtstart', reminder_start)
     event.add('dtend', reminder_end)
+    event.add('dtstamp', datetime.today())
+    event.add('uid', str(UID))
+    UID += 1
 
     return event
 
@@ -64,6 +70,7 @@ def create_events(cal, dates):
     """Add events to a calendar
     Dates are stored are as list of tuple (start, end)
     Futur improvment : leave the choice of events name"""
+    global UID
 
     for date in dates:
         # create the event
@@ -72,6 +79,9 @@ def create_events(cal, dates):
         event.add('description', "Prélèvement sur le lac d'Aydat")
         event.add('dtstart', date[0])
         event.add('dtend', date[1])
+        event.add('dtstamp', datetime.today())
+        event.add('uid', str(UID))
+        UID += 1
 
         # Add the event in the calendar
         cal.add_component(event)
@@ -107,6 +117,10 @@ if __name__ == "__main__":
 
         # init the calendar
         cal = ic.Calendar()
+
+        # Add mandatory fields to be compliant with the RFC 5545 3.6
+        cal.add('prodid', 'DIAMOND ANR calendar')
+        cal.add('version', '2.0')
 
         # Read the dates
         dates = parse_dates(args.dates)
