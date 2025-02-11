@@ -9,17 +9,16 @@ This will (maybe) improved in the future
 from argparse import RawTextHelpFormatter
 from datetime import datetime, timedelta
 
-import os
 import sys
 import argparse
 import icalendar as ic
 
 UID = 0
 
-def _add_reminder(date, n_day_before = 2):
-    """Create a reminder 2 days BEFORE the date passed in argument
+def _add_reminder(date, n_day_before = 1):
+    """Create a reminder 1 day BEFORE the date passed in argument
     If the reminder is a saturday or a sunday, it is set to the friday.
-    date is a tuple of datetime.datetime() objects
+    'date' is a tuple of datetime.datetime() objects
     """
     global UID
     # Set the reminder "n_day_before"
@@ -29,8 +28,8 @@ def _add_reminder(date, n_day_before = 2):
     # Is it during the week-end? 6 = saturday; 7 = sunday
     if datetime.isoweekday(reminder_start) >= 6:
         for i in range(1,7):
-            print(date[0], "reminder test, week day = ",
-                datetime.isoweekday(date[0] - timedelta(days = i)))
+            # print(date[0], "reminder test, week day = ",
+            #     datetime.isoweekday(date[0] - timedelta(days = i)))
 
             if datetime.isoweekday(date[0] - timedelta(days = i)) == 5:
                 reminder_start = date[0] - timedelta(days = i)
@@ -39,7 +38,7 @@ def _add_reminder(date, n_day_before = 2):
 
     event = ic.Event()
     event.add('summary', 'Préparer sortie terrain')
-    event.add('description', "Charger batterie et sondes; preparer materiel")
+    event.add('description', "Charger batterie et sondes; Préparer materiel")
     event.add('dtstart', reminder_start)
     event.add('dtend', reminder_end)
     event.add('dtstamp', datetime.today())
@@ -55,7 +54,7 @@ def parse_dates(infile):
     """
     all_dates = []
     # loop over the lines of line (dates)
-    with open(infile, "r") as fi:
+    with open(infile, "r", encoding="utf-8") as fi:
         for line in fi.readlines():
             start = datetime.strptime(line.rstrip() + "-8", "%Y-%m-%d-%H")  # Force the 8 am
             end = datetime.strptime(line.rstrip() + "-12", "%Y-%m-%d-%H")  # Force noon
@@ -101,10 +100,14 @@ def print_cal(cal, outfile):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(formatter_class = RawTextHelpFormatter)
+    __description__ = "This is a very basic program that generates ICal file " \
+                      "for a single event (8am - 12am)\nplus creates reminder " \
+                      "the day before, in the form of a one-hour event (8 - 9am)."
+    parser = argparse.ArgumentParser(formatter_class = RawTextHelpFormatter,
+                                     description = __description__)
     parser.add_argument('dates', help='File with the dates, format "YYYY-MM-DD"')
     parser.add_argument('ouftile', help='Basename of the file that contains the'
-                        'calendar')
+                        ' calendar')
 
     args = parser.parse_args()
 
@@ -129,8 +132,6 @@ if __name__ == "__main__":
         ## Create an event 48h before to charge the batteries
         ## and book the material
         cal = create_events(cal, dates)
-
-        print(cal)
 
         # write the ICS file
         print_cal(cal, args.ouftile + ".ics")
