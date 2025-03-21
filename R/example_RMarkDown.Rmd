@@ -1,0 +1,93 @@
+---
+title: R MarkDown example
+output:
+  html_document:
+    toc: TRUE
+    highlight: tango
+    default: TRUE
+    ## Fold all code blocks by default
+    # code_folding: hide
+    ## unfold all code blocks by default, except those tagged with
+    ##    class.source = 'fold-hide'
+    code_folding: show   
+params:
+  year: 2025
+  region: Europe
+  printcode: TRUE
+---
+
+First of all, <span style="color: red;">I learned a lot</span> about the
+customisation from the
+[R Markdown Cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/).
+
+## Start of the project
+
+Start to load a library. Most of the time it is a good habit to keep the warning
+and other messages at this step, _eg_ to know which function was masked from
+another package. But here I want to show that it is possible to have a clean
+output.
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+
+set.seed <- 654136136
+```
+
+## Import data
+
+As said in the title, import the data. The code-block is hidden by default
+thanks to the tag `class.source = 'fold-hide'`.
+
+```{r, class.source = 'fold-hide'}
+attach(iris)
+
+```
+
+## A plot
+
+Let's plot the data. Because I do not want a large plot, I can set the width
+and height of the figure, and center it. See sections _5.4_ and _5.5_ of the
+_R Markdown Cookbook_ for more details and options.
+
+```{r, fig.width=5, fig.height=4, fig.align = 'center'}
+ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length, colour = Species)) +
+  geom_point() +
+  scale_colour_brewer(palette = "Set2") +
+  labs(title = "A super cool plot") +
+  theme_bw() +
+  theme(text = element_text(family = "IBM Plex Sans"),
+        legend.text = element_text(face = "italic"),
+        plot.title = element_text(hjust = 0.5) )
+
+```
+
+## Code-block not rendered
+
+The code-block below is not ran during the rendering ( _"Knitting"_ ) of the
+document. This can be interesting when you saved a figure in a file (`svg`, `png`
+or the format you like, which must be `svg`). Because you did some edits, it is
+not a desirable to generate again the file and erase your work...  
+This is also applicable for tables, object saved as `MyObject.RDS` and so on.
+
+```{r, eval=FALSE}
+# This file is not generated during rendering because the chunk is not ran
+ggsave("my_test_figure.svg", width = 5, height = 4, dppi = 300)
+```
+
+## Show a table
+
+It is possible to display tables nicely. Here are the first 6 lines from the
+_iris_ data set. There is a complete section in the _R Markdown cookbook_,
+[section _10_](https://bookdown.org/yihui/rmarkdown-cookbook/tables.html).
+
+```{r}
+knitr::kable(head(iris),
+             caption = "Overview of the iris dataset", align = "c")
+
+```
+
+It is not perfect, there is something better to do with the `kableExtra` library.
+
+## Future advices
+
+_WIP_

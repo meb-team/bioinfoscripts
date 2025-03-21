@@ -121,6 +121,14 @@ A list of SnakeMake scripts
   The number of thread to run _PhyloSift_ can be customised too, through
   `--config thread={int}`.
 
+## R
+
+I do not develop with _R_, however I extensivelly use it to analyse microbiome
+data ,_16S/18S rDNA sequencing_, and to use _GGplot2_, in _RStudio_.
+
+Example of a _R Markdown_ document, `R/example_RMarkDown.Rmd`, and
+the rendering too, `R/example_RMarkDown.html`.
+
 ## Miscelaneous
 
 ### Gererate URL to share files stored in _S3_
@@ -159,7 +167,7 @@ done < metaplasmidomes_files.tsv
 # Download
 while read file name url
 do
-    ## Uncomment the line with your preferred tool
+    ## Uncomment the line with your prefered tool
     # wget -O $name $url
     # curl -o $name $url
     sleep 2 # because it always better to let server rest for some seconds
