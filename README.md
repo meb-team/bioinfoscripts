@@ -129,9 +129,9 @@ data ,_16S/18S rDNA sequencing_, and to use _GGplot2_, in _RStudio_.
 Example of a _R Markdown_ document, `R/example_RMarkDown.Rmd`, and
 the rendering too, `R/example_RMarkDown.html`.
 
-## Miscelaneous
+## AWS S3 tips
 
-### Gererate URL to share files stored in _S3_
+### Gererate URL to share files stored in a _S3_ bucket
 
 Here is the procedure to generate a temporary URL to download a **single** file
 stored in a _S3_ bucket:
@@ -172,6 +172,34 @@ do
     # curl -o $name $url
     sleep 2 # because it always better to let server rest for some seconds
 done < metaplasmidomes_files_urls.tsv
+```
+
+### Allow the versionning on a bucket
+
+This is a recommendation I got from a colleague, to add a 10 days lifecycle
+before deletion. **I have not tested it**!
+
+```bash
+export AWS_SECRET_ACCESS_KEY=XXX
+export AWS_ACCESS_KEY_ID=YYY
+export AWS_ENDPOINT_URL=ZZZZ
+export AWS_S3_ENDPOINT=AAAA
+export AWS_REGION=BBBBB
+
+aws s3api put-bucket-versioning --bucket <YOUR_BUCKET_NAME> \
+  --versioning-configuration Status=Enabled
+
+vi ./lifecycle.json
+#{"Rules": [{
+#  "ID": "Delete old versions after 10 days",
+#  "Status": "Enabled",
+#  "NoncurrentVersionExpiration": {
+#    "NoncurrentDays": 10
+#  }
+#}]}
+
+aws s3api put-bucket-lifecycle-configuration --bucket <YOUR_BUCKET_NAME> \
+  --lifecycle-configuration file://lifecycle.json
 ```
 
 ## Usage, Share and Contibutions

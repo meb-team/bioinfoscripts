@@ -3,12 +3,13 @@ title: R MarkDown example
 output:
   html_document:
     toc: TRUE
+    ## Available syntax highlight
+    ### "default", "tango", "pygments", "kate", "monochrome", "espresso", "zenburn", "haddock" 
     highlight: tango
     default: TRUE
     ## Fold all code blocks by default
     # code_folding: hide
-    ## unfold all code blocks by default, except those tagged with
-    ##    class.source = 'fold-hide'
+    ## unfold all code blocks by default, except those tagged with "class.source = 'fold-hide'"
     code_folding: show   
 params:
   year: 2025
@@ -27,7 +28,7 @@ and other messages at this step, _eg_ to know which function was masked from
 another package. But here I want to show that it is possible to have a clean
 output.
 
-```{r, message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 
 set.seed <- 654136136
@@ -45,9 +46,13 @@ attach(iris)
 
 ## A plot
 
+### Few words
+
 Let's plot the data. Because I do not want a large plot, I can set the width
 and height of the figure, and center it. See sections _5.4_ and _5.5_ of the
 _R Markdown Cookbook_ for more details and options.
+
+### The figure
 
 ```{r, fig.width=5, fig.height=4, fig.align = 'center'}
 ggplot(iris, aes(x = Sepal.Width, y = Sepal.Length, colour = Species)) +
