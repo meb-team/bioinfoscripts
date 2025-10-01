@@ -13,7 +13,7 @@ STDERR. A file and logfile and be used too.
 Examples of dotfiles in the directory `dotfiles/`. Do not forget to copy them
 and add the caracteristic `.` prefix!
 
-## _Conda_ environments
+## _Conda_
 
 **IMPORTANT** : Some channels require a licence to use them, that's why I recently
 updated my [_.condarc_](dotfiles/condarc). This
@@ -89,6 +89,8 @@ Here is a list of scripts used for different task. Note that the library
 - `generate_ICS_file.py`: aims to generate an _ICalendar_ (_ICS_) file with a
   collection of events, based on dates written in a text file. There is no may to change
   the name of the event, nor the schedule (8am - noon). Also generate a reminder 48h before **WIP**
+- `random_dna_sequence.py`: generate a random DNA sequence, 1000 nt by default,
+  the sequence name is the _SHA256_ digest of the sequence.
 
 ## Snakefiles
 
