@@ -1,0 +1,63 @@
+{
+  //    "editor.minimap.maxColumn": 80,
+  "terminal.external.linuxExec": "gnome-terminal",
+  "terminal.integrated.copyOnSelection": true,
+  "telemetry.telemetryLevel": "off",
+  "editor.minimap.enabled": false,
+  "editor.renderWhitespace": "boundary",
+  "extensions.autoUpdate": false,
+  "editor.formatOnSave": true,
+  "editor.wordWrapColumn": 120,
+  "editor.rulers": [80, 120],
+  "workbench.colorCustomizations": {
+    "editorRuler.foreground": "#e65ccf"
+  },
+  "workbench.startupEditor": "none",
+  "update.mode": "manual",
+  "update.showReleaseNotes": false,
+  "remote.SSH.remoteServerListenOnSocket": true,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "shellformat.effectLanguages": [
+    "shellscript",
+    "dockerfile",
+    "dotenv",
+    "hosts",
+    "jvmoptions",
+    "ignore",
+    "gitignore",
+    "properties",
+    "spring-boot-properties",
+    "azcli",
+    "bats"
+  ],
+  "markdown.extension.italic.indicator": "_",
+  "workbench.colorTheme": "Gruvbox Light Soft",
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "diffEditor.ignoreTrimWhitespace": true
+  },
+  "vscode-pets.petSize": "small",
+  "vscode-pets.petType": "fox",
+  "vscode-pets.petColor": "orange",
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "terminal.integrated.inheritEnv": true,
+  "editor.largeFileOptimizations": false,
+  "JSON-zain.json.autorefresh": true,
+
+  // Python
+
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.flake8",
+    "editor.formatOnSave": true
+  },
+  "git.openRepositoryInParentFolders": "never",
+  "editor.wordWrap": "on"
+}

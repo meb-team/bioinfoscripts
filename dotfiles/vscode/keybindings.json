@@ -1,0 +1,10 @@
+// Place your key bindings in this file to override the defaults
+// This is the file ~/.config/Code/User/keybindings.json
+
+[
+  {
+    "key": "ctrl+shift+c",
+    "command": "markdown.extension.editing.toggleCodeBlock",
+    "when": "editorTextFocus && !editorReadonly && editorLangId =~ /^markdown$|^rmd$|^quarto$/"
+  }
+]
